@@ -1,0 +1,23 @@
+{
+  "name": "web_second",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/il-gareni4/web_second.git"
+  },
+  "author": "Ilya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/il-gareni4/web_second/issues"
+  },
+  "homepage": "https://github.com/il-gareni4/web_second#readme",
+  "description": ""
+}
