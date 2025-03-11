@@ -1,0 +1,10 @@
+{
+    "watch": [
+        "src/*",
+        "static/*",
+        "package.json",
+        "tsconfig.json"
+    ],
+    "ext": "ts,json,ejs",
+    "exec": "tsx ./src/index.ts"
+}
