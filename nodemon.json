@@ -3,8 +3,9 @@
         "src/*",
         "static/*",
         "package.json",
-        "tsconfig.json"
+        "tsconfig.json",
+        ".env"
     ],
     "ext": "ts,json,ejs",
-    "exec": "tsx ./src/index.ts"
+    "exec": "tsx --env-file=.env ./src/index.ts"
 }
