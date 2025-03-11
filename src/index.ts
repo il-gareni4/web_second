@@ -13,8 +13,8 @@ app.get('/', (_, res) => {
     res.send('Hello World!')
 })
 
-app.get('/ejs', (_, res) => {
-    res.render('layout', { title: 'EJS', message: 'Test message', body: 'index' })
+app.get('/ejs', (req, res) => {
+    res.render('layout', { title: 'EJS', message: req.query.message || "No message sent", body: 'index' })
 })
 
 app.listen(port, () => {
