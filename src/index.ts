@@ -2,6 +2,7 @@ import express from "express";
 import setupSwagger from "./setup/swagger.js";
 import setupMongoose from "./setup/mongoose.js";
 import userRoutes from "./routes/user.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 const port = parseInt(process.env.PORT || "3000");
@@ -28,6 +29,7 @@ app.get("/ejs", (req, res) => {
 });
 
 app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
 
 app.listen(port, () => {
     console.log(`Приложение запущено на порту ${port}`);

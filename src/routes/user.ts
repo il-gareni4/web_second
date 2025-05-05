@@ -1,5 +1,6 @@
 import express from "express";
 import User from "../models/User.js";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.get("/", async (req, res) => {
  * /users:
  *   post:
  *     summary: Создать нового пользователя
- *     description: Создать нового пользователя с указанным именем и email.
+ *     description: Создать нового пользователя с указанным именем, email и паролем.
  *     requestBody:
  *       required: true
  *       content:
@@ -50,9 +51,14 @@ router.get("/", async (req, res) => {
  *                 type: string
  *                 description: Email пользователя
  *                 example: anna.petrova@example.com
+ *               password:
+ *                 type: string
+ *                 description: Пароль пользователя
+ *                 example: password123
  *             required:
  *               - name
  *               - email
+ *               - password
  *     responses:
  *       201:
  *         description: Пользователь успешно создан.
@@ -63,8 +69,16 @@ router.get("/", async (req, res) => {
  *       400:
  *         description: Неверный запрос
  */
-router.post("/", async (req, res) => {
+router.post("/", async (req, res): Promise<any> => {
     try {
+        // Проверяем, существует ли пользователь с таким email
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser) {
+            return res.status(400).json({
+                message: "Пользователь с таким email уже существует",
+            });
+        }
+
         const user = new User(req.body);
         await user.save();
         res.status(201).json(user);
@@ -78,7 +92,7 @@ router.post("/", async (req, res) => {
  * /users:
  *   put:
  *     summary: Редактировать пользователя по ID
- *     description: Обновить данные пользователя (имя и/или email) по его ID.
+ *     description: Обновить данные пользователя (имя, email и/или пароль) по его ID.
  *     requestBody:
  *       required: true
  *       content:
@@ -98,6 +112,10 @@ router.post("/", async (req, res) => {
  *                 type: string
  *                 description: Новый email пользователя (опционально).
  *                 example: sergey.petrov@example.com
+ *               password:
+ *                 type: string
+ *                 description: Новый пароль пользователя (опционально).
+ *                 example: newpassword123
  *             required:
  *               - id
  *     responses:
@@ -114,27 +132,30 @@ router.post("/", async (req, res) => {
  */
 router.put("/", async (req, res): Promise<any> => {
     try {
-        const { id, name, email } = req.body;
+        const { id, name, email, password } = req.body;
         if (!id) {
             return res.status(400).json({ message: "ID пользователя обязателен" });
         }
 
-        // Собираем данные для обновления
-        const updateData: { name?: string; email?: string } = {};
-        if (name) updateData.name = name;
-        if (email) updateData.email = email;
-
-        if (Object.keys(updateData).length === 0) {
-             return res.status(400).json({ message: "Необходимо указать хотя бы одно поле для обновления (name или email)" });
-        }
-
-        // new: true возвращает обновленный документ, runValidators: true включает валидацию схемы
-        const user = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }); 
-
+        // Находим пользователя для обновления
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: "Пользователь не найден" });
         }
 
+        // Собираем данные для обновления
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (password) user.password = password;
+
+        if (!name && !email && !password) {
+            return res.status(400).json({
+                message:
+                    "Необходимо указать хотя бы одно поле для обновления (name, email или password)",
+            });
+        }
+
+        await user.save();
         res.status(200).json(user);
     } catch (err) {
         // Обработка ошибок валидации или других ошибок БД

@@ -33,9 +33,14 @@ const options = {
                             type: "string",
                             description: "Email пользователя",
                             example: "ivan.ivanov@example.com"
+                        },
+                        password: {
+                            type: "string",
+                            description: "Пароль пользователя (не возвращается в API)",
+                            example: "password123"
                         }
                     },
-                    required: ["name", "email"]
+                    required: ["name", "email", "password"]
                 }
             }
         },
