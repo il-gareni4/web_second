@@ -1,0 +1,11 @@
+{
+    "watch": [
+        "src/*",
+        "static/*",
+        "package.json",
+        "tsconfig.json",
+        ".env"
+    ],
+    "ext": "ts,json,ejs",
+    "exec": "tsx --env-file=.env ./src/index.ts"
+}
